@@ -4,4 +4,5 @@
 本项目的gemini和chatgpt部分未经过测试
 2026.7.14
 这个是不是应该叫README
-删除了裸漏的apikey,改为从环境变量中获取
+删除了裸漏的apikey,改为从环境变量中获取,只用前需导入环境变量deepseek_apikey,chatgpt_apikey,gemini_apikey
+其实chatgpt是做了没测试,而gemini则是压根没做
