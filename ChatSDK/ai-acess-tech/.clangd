@@ -1,0 +1,3 @@
+CompileFlags:
+  CompilationDatabase: "/root/SDK/ChatSDK/ai-acess-tech"
+  Add: [-I/root/SDK/ChatSDK/ai-acess-tech/sdk/include]

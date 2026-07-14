@@ -1,0 +1,8 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+AccessModifierOffset: -4
+ColumnLimit: 120
+AllowShortFunctionsOnASingleLine: None
+BreakBeforeBraces: Attach
+# 这种风格是大括号不换行，是 VS Code / LLVM 的默认风格
+# 如果你想要大括号换行（像 Visual Studio 那样），可以将 BreakBeforeBraces 改为 Allman
