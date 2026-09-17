@@ -50,3 +50,10 @@ install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/include/
         DESTINATION include/ai_chat_sdk
         FILES_MATCHING PATTERN "*.h"
 )
+
+# 自定义清理目标：在 build 目录执行 make clear，删除所有编译产物(.o/.a/.exe等)
+add_custom_target(clear
+    COMMAND ${CMAKE_MAKE_PROGRAM} clean
+    COMMAND ${CMAKE_COMMAND} -E remove -f ${CMAKE_BINARY_DIR}/lib${SDK_NAME}.a
+    COMMENT "make clear: 删除所有编译产物(.o/.a/.exe等)"
+)

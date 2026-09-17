@@ -108,18 +108,12 @@ namespace ai_chat_sdk
     }
     std::vector<std::string> SessionManager::getSessionLists() const
     {
-        ///检测数据库中是否有未添加到_sessions的会话
-        auto sessions = _dataManager.getAllSessions();
         std::lock_guard<std::mutex> lock(_mutex);
         std::vector<std::pair<time_t,std::shared_ptr<Session>>> temp;
         temp.reserve(_sessions.size());
         for (auto it : _sessions)
         {
             temp.push_back({it.second->_updatedAt, it.second});
-        }
-        for (auto session : sessions)
-        {
-            temp.push_back({session->_updatedAt, session});
         }
         std::sort(temp.begin(), temp.end(), [](const auto &a, const auto &b)
         {
