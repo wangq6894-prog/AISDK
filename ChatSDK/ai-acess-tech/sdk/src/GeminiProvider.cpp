@@ -22,7 +22,7 @@ namespace ai_chat_sdk{
 
             it = modelConfig.find("endpoint");
             if (it == modelConfig.end()){
-                _endpoint = "https://generativelanguage.googleapis.com";
+                _endpoint = "https://ai.wqproxy.top";
             }else{
                 _endpoint = it->second;
             }
@@ -100,7 +100,9 @@ namespace ai_chat_sdk{
             httplib::Client client(_endpoint);
             client.set_connection_timeout(30, 0);
             client.set_read_timeout(60, 0);
-            client.set_proxy("127.0.0.1", 7890);
+            
+            /// 设置代理，但本服务器上目前没有😭
+            //client.set_proxy("127.0.0.1", 7890);
 
             // 设置请求头
             httplib::Headers headers = {
@@ -201,7 +203,9 @@ namespace ai_chat_sdk{
             httplib::Client client(_endpoint);
             client.set_connection_timeout(60, 0);
             client.set_read_timeout(300, 0);
-            client.set_proxy("127.0.0.1", 7890);
+
+            /// 设置代理，但本服务器上目前没有😭
+            //client.set_proxy("127.0.0.1", 7890);
 
             // 设置请求头
             httplib::Headers headers = {
