@@ -85,7 +85,8 @@ std::string ChatgptProvider::sendMessage(const std::vector<Message> &messages,
     // client.set_proxy("127.0.0.1", 7890);
     
     // 5.设置请求头
-    httplib::Headers headers = {{"Authorization", "Bearer " + _apiKey}, {"Content-Type", "application/json"}};
+    // Content-Type 由 Post 的第 4 个参数添加，此处不要重复（否则产生重复头）
+    httplib::Headers headers = {{"Authorization", "Bearer " + _apiKey}};
     // 6.发送POST请求
     auto response = client.Post("/v1/chat/completions", headers, requestBodyStr, "application/json");
     if (!response) {

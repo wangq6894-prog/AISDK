@@ -49,8 +49,13 @@ namespace ai_chat_sdk
         session->_sessionId  = sessionId;
         session->_createdAt = std::time(nullptr);
         session->_updatedAt = std::time(nullptr);
+        // 先落库，成功后才更新内存缓存；写库失败不污染缓存
+        if (!_dataManager.insertSession(*session))
+        {
+            ERR("createSession: insert into db failed, sessionId: {}", sessionId);
+            return "";
+        }
         _sessions[sessionId] = session;
-        _dataManager.insertSession(*session);
         return sessionId;
     }
     std::shared_ptr<Session> SessionManager::getSession(const std::string &sessionId)
@@ -90,10 +95,15 @@ namespace ai_chat_sdk
 
         msg._messageId = generateMessageId(it->second->_messages.size());//size是消息个数
         msg._timestamp = std::time(nullptr);
+        // 同上，先落库，成功后才更新内存缓存
+        if (!_dataManager.insertSessionMessage(sessionId, msg))
+        {
+            ERR("addMessage: insert into db failed, sessionId: {}", sessionId);
+            return false;
+        }
         it->second->_messages.push_back(msg);
-        it->second->_updatedAt = std::time(nullptr);
+        it->second->_updatedAt = msg._timestamp;
         INFO("addMessage sessionId: {}, message: {}", sessionId, msg._messageId);
-        _dataManager.insertSessionMessage(sessionId, msg);
         return true;
     }
     std::vector<Message> SessionManager::getHistroyMessages(const std::string &sessionId)
@@ -134,8 +144,13 @@ namespace ai_chat_sdk
         {
             return false;
         }
+        // 先删库，成功后才删缓存
+        if (!_dataManager.deleteSession(sessionId))
+        {
+            ERR("deleteSession: delete from db failed, sessionId: {}", sessionId);
+            return false;
+        }
         _sessions.erase(it);
-        _dataManager.deleteSession(sessionId);
         return true;    
     }
     void SessionManager::updateSessionTimestamp(const std::string &sessionId)
@@ -144,15 +159,25 @@ namespace ai_chat_sdk
         auto it = _sessions.find(sessionId);
         if(it != _sessions.end())
         {
-            it->second->_updatedAt = std::time(nullptr);
-            _dataManager.updateSessionTimestamp(sessionId, it->second->_updatedAt);
+            std::time_t now = std::time(nullptr);
+            if (!_dataManager.updateSessionTimestamp(sessionId, now))
+            {
+                ERR("updateSessionTimestamp: db update failed, sessionId: {}", sessionId);
+                return;
+            }
+            it->second->_updatedAt = now;
         }
     }
     void SessionManager::clearAllSessions()
     {
         std::lock_guard<std::mutex> lock(_mutex);
+        // 同上，先删库，成功后才删缓存
+        if (!_dataManager.clearAllSessions())
+        {
+            ERR("clearAllSessions: db clear failed");
+            return;
+        }
         _sessions.clear();
-        _dataManager.clearAllSessions();
         INFO("clear %d session", _sessions.size());
         
     }

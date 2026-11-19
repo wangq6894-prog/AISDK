@@ -97,6 +97,14 @@ std::string ChatSDK::sendMessage(const std::string &sessionId, const std::string
     Message userMessage("user", message);
     _sessionManager.addMessage(sessionId, userMessage);
     auto historyMessages = _sessionManager.getHistroyMessages(sessionId);
+    // 注入系统提示词（不落库，仅本次请求生效）
+    historyMessages.insert(
+        historyMessages.begin(),
+        Message("system",
+                "你是「代码手记」网站上的 AI 助手，由站点作者基于自研 C++ 网络库搭建。"
+                "回答用中文，简洁直接，不说客套话和免责声明。"
+                "技术问题给出可执行的结论，必要时用短代码或分点说明；"
+                "不确定就说不确定，不要编造。"));
 
     // 构建请求参数
     auto it = _modelConfigs.find(session->_modelName);
@@ -143,6 +151,14 @@ std::string ChatSDK::sendMessageStream(const std::string &sessionId, const std::
     Message userMessage("user", message);
     _sessionManager.addMessage(sessionId, userMessage);
     auto historyMessages = _sessionManager.getHistroyMessages(sessionId);
+    // 注入系统提示词（不落库，仅本次请求生效）
+    historyMessages.insert(
+        historyMessages.begin(),
+        Message("system",
+                "你是「代码手记」网站上的 AI 助手，由站点作者基于自研 C++ 网络库搭建。"
+                "回答用中文，简洁直接，不说客套话和免责声明。"
+                "技术问题给出可执行的结论，必要时用短代码或分点说明；"
+                "不确定就说不确定，不要编造。"));
 
     // 构建请求参数
     auto it = _modelConfigs.find(session->_modelName);

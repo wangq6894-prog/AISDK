@@ -97,9 +97,10 @@ namespace ai_chat_sdk
         client.set_connection_timeout(30, 0);
         client.set_read_timeout(60, 0);
         // 5.设置请求头
+        // 注意：Content-Type 由下方 Post 的第 4 个参数添加，
+        // 这里再写一遍会产生重复头，DeepSeek 网关会直接回 415
         httplib::Headers headers = {
-            {"Authorization", "Bearer " + _apiKey},
-            {"Content-Type", "application/json"}};
+            {"Authorization", "Bearer " + _apiKey}};
         // 6.发送POST请求
         auto response = client.Post("/v1/chat/completions", headers, requestBodyStr, "application/json");
         if (!response)
